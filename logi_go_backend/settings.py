@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -11,13 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS", []).split(",") if os.getenv("ALLOWED_HOSTS") else []
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
-    "ALLOWED_HOSTS", []).split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
+    "CSRF_TRUSTED_ORIGINS", []).split(",") if os.getenv("CSRF_TRUSTED_ORIGINS") else []
 
 # Application definition
 
@@ -29,7 +30,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'logi_go_app',
-    'corsheaders'
+    'corsheaders',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 MIDDLEWARE = [
@@ -117,3 +128,20 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+
+# settings.py
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "dangerous-dragon",
+        "TIMEOUT": 60 * 15,  # 15 minutes
+    }
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = "test@logigo.com"
+
+
+ACCESS_TOKEN_LIFETIME = 15 # minute
+REFRESH_TOKEN_LIFETIME = 7 # days
